@@ -2,6 +2,10 @@
 
 A command-line tool to fetch and display GitHub user activity, including commits, issues, pull requests, and stars.
 
+## Links
+
+[Roadmap.sh challenge](https://roadmap.sh/projects/github-user-activity)
+
 ## Features
 
 - View recent GitHub activity for any public user
@@ -17,7 +21,7 @@ A command-line tool to fetch and display GitHub user activity, including commits
 
 Either of these runtimes:
 
-- [Deno](https://deno.land/manual/getting_started/installation) (Recommended)
+- [Deno](https://docs.deno.com/runtime) (Recommended)
 - [Node.js](https://nodejs.org/) (v18 or higher)
 
 ## Installation
@@ -114,11 +118,3 @@ The CLI handles common errors:
 - Only fetches recent public activity (limited by GitHub API)
 - Requires GitHub API access (may be rate-limited)
 - Some events might not be captured if they exceed the API's event limit
-
-## Contributing
-
-Feel free to open issues or submit pull requests for improvements.
-
-## License
-
-[MIT License](LICENSE)
