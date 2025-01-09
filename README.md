@@ -29,8 +29,8 @@ Either of these runtimes:
 1. Clone the repository:
 
 ```bash
-git clone <repository-url>
-cd github-activity-cli
+git clone https://github.com/mechitoua/github-user-activity
+cd github-user-activity
 ```
 
 2. Make the script executable:
