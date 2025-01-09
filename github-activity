@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+# Exit on error
+set -e
+
+# Check if argument is provided
+if [ "$#" -ne 1 ]; then
+    echo "Usage: github-activity <github-username>"
+    exit 1
+fi
+
+# Try Deno first, fallback to Node
+if command -v deno &> /dev/null; then
+    deno run --allow-net src/main.ts "$1"
+elif command -v node &> /dev/null; then
+    # Use Node's fetch API (available since Node 18+)
+    node --loader ts-node/esm main.ts "$1"
+else
+    echo "Error: Neither Deno nor Node.js is installed."
+    echo "Please install either runtime:"
+    echo "Deno: https://deno.land/manual/getting_started/installation"
+    echo "Node.js: https://nodejs.org/"
+    exit 1
+fi

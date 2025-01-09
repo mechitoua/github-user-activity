@@ -1,13 +1,19 @@
 // deno-lint-ignore-file
 import { ActivityStats, GitHubEvent, RepoStats } from '../types.ts'
 
-// deno-lint-ignore-file
-async function fetchGitHubActivity(username: string): Promise<GitHubEvent[]> {
+export async function fetchGitHubActivity(username: string): Promise<GitHubEvent[]> {
   const response = await fetch(`https://api.github.com/users/${username}/events/public`)
+  if (response.status === 404) {
+    throw new Error(`GitHub user '${username}' not found`)
+  }
   if (!response.ok) {
     throw new Error(`Failed to fetch GitHub activity: ${response.statusText}`)
   }
-  return await response.json()
+  const data = await response.json()
+  if (!Array.isArray(data) || data.length === 0) {
+    throw new Error(`No public activity found for user '${username}'`)
+  }
+  return data
 }
 
 function initRepoStats(repoName: string): RepoStats {
@@ -22,7 +28,7 @@ function initRepoStats(repoName: string): RepoStats {
   }
 }
 
-function processEvents(events: GitHubEvent[]): ActivityStats {
+export function processEvents(events: GitHubEvent[]): ActivityStats {
   const repoStats = new Map<string, RepoStats>()
   for (const event of events) {
     const repoName = event.repo.name
@@ -63,7 +69,7 @@ function processEvents(events: GitHubEvent[]): ActivityStats {
   return { repoStats }
 }
 
-function formatStatistics(stats: Map<string, RepoStats>): string[] {
+export function formatStatistics(stats: Map<string, RepoStats>): string[] {
   const output: string[] = []
   const statsByType = new Map<string, string[]>()
 
@@ -127,26 +133,3 @@ function formatStatistics(stats: Map<string, RepoStats>): string[] {
 
   return output
 }
-
-async function main() {
-  if (Deno.args.length !== 1) {
-    console.error('Please provide a GitHub username')
-    Deno.exit(1)
-  }
-
-  const username = Deno.args[0]
-  try {
-    const events = await fetchGitHubActivity(username)
-    const { repoStats } = processEvents(events)
-
-    const statistics = formatStatistics(repoStats)
-    if (statistics.length > 0) {
-      console.log(statistics.join('\n'))
-    }
-  } catch (error) {
-    console.error('Error:', (error as Error).message)
-    Deno.exit(1)
-  }
-}
-
-main()
